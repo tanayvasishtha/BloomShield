@@ -1,0 +1,17 @@
+# Python caches
+*.pyc
+__pycache__/
+
+# Environment
+.venv/
+
+# Large files and datasets
+*.jpg
+*.jpeg
+*.png
+*.pth
+uploads.db
+
+# Misc
+temp*
+*.log 
