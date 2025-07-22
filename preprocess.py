@@ -2,7 +2,7 @@ import os
 import shutil
 
 def flatten_dataset():
-    for split in ['train', 'valid']:
+    for split in ['train', 'valid', 'test']:
         if not os.path.exists(split):
             print(f"{split} directory not found. Ensure dataset is unzipped in the root.")
             continue
@@ -23,7 +23,7 @@ def flatten_dataset():
                     shutil.move(old_path, new_path)
                     print(f"Moved {old_path} to {new_path}")
     # Remove empty directories
-    for split in ['train', 'valid']:
+    for split in ['train', 'valid', 'test']:
         if os.path.exists(split) and not os.listdir(split):
             shutil.rmtree(split)
             print(f"Removed empty directory: {split}")
