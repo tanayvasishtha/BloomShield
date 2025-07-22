@@ -26,30 +26,28 @@ class PlantDataset(Dataset):
         return image, label
 
 def load_data():
-    all_images = glob.glob('*.jpg') + glob.glob('*.JPEG')
-    train_images, valid_images, test_images = [], [], []
+    train_images = glob.glob('data/train/*.jpg') + glob.glob('data/train/*.JPEG')
+    valid_images = glob.glob('data/valid/*.jpg') + glob.glob('data/valid/*.JPEG')
+    test_images = glob.glob('data/test/*.jpg') + glob.glob('data/test/*.JPEG')
     train_labels, valid_labels, test_labels = [], [], []
     class_to_idx = {}
     idx = 0
-    for img in all_images:
-        parts = img.split('_', 2)
-        if len(parts) < 3:
-            continue
-        split = parts[0]
-        class_name = parts[1]
-        if class_name not in class_to_idx:
-            class_to_idx[class_name] = idx
-            idx += 1
-        label = class_to_idx[class_name]
-        if split == 'train':
-            train_images.append(img)
-            train_labels.append(label)
-        elif split == 'valid':
-            valid_images.append(img)
-            valid_labels.append(label)
-        elif split == 'test':
-            test_images.append(img)
-            test_labels.append(label)
+    def process_images(images, labels):
+        for img in images:
+            base = os.path.basename(img)
+            parts = base.split('_', 1)
+            if len(parts) < 2:
+                continue
+            class_name = parts[0]
+            if class_name not in class_to_idx:
+                class_to_idx[class_name] = idx
+                idx += 1
+            label = class_to_idx[class_name]
+            labels.append(label)
+        return images, labels
+    train_images, train_labels = process_images(train_images, train_labels)
+    valid_images, valid_labels = process_images(valid_images, valid_labels)
+    test_images, test_labels = process_images(test_images, test_labels)
     return train_images, train_labels, valid_images, valid_labels, test_images, test_labels, class_to_idx
 
 class SimpleCNN(nn.Module):
