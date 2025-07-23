@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import os
 import time
 import shutil
+from PIL import Image
 
 def prepare_yolo_dataset():
     """Convert our data structure to YOLO classification format"""
@@ -14,13 +15,19 @@ def prepare_yolo_dataset():
     train_dir = 'data/train'
     if os.path.exists(train_dir):
         for img_file in os.listdir(train_dir):
+            src = os.path.join(train_dir, img_file)
+            try:
+                img = Image.open(src)
+                img.verify()  # Verify it's a valid image
+            except:
+                print(f"Skipping invalid image: {src}")
+                continue
             if img_file.lower().endswith(('.jpg', '.jpeg', '.png')):
                 # Extract class name from filename (first part before underscore)
                 class_name = img_file.split('_')[0]
                 class_dir = f'{yolo_root}/train/{class_name}'
                 os.makedirs(class_dir, exist_ok=True)
                 
-                src = os.path.join(train_dir, img_file)
                 dst = os.path.join(class_dir, img_file)
                 if not os.path.exists(dst):
                     shutil.copy2(src, dst)
@@ -29,12 +36,18 @@ def prepare_yolo_dataset():
     val_dir = 'data/valid'
     if os.path.exists(val_dir):
         for img_file in os.listdir(val_dir):
+            src = os.path.join(val_dir, img_file)
+            try:
+                img = Image.open(src)
+                img.verify()
+            except:
+                print(f"Skipping invalid image: {src}")
+                continue
             if img_file.lower().endswith(('.jpg', '.jpeg', '.png')):
                 class_name = img_file.split('_')[0]
                 class_dir = f'{yolo_root}/val/{class_name}'
                 os.makedirs(class_dir, exist_ok=True)
                 
-                src = os.path.join(val_dir, img_file)
                 dst = os.path.join(class_dir, img_file)
                 if not os.path.exists(dst):
                     shutil.copy2(src, dst)
@@ -51,7 +64,7 @@ def train_yolo_model():
     dataset_path = prepare_yolo_dataset()
     
     # Load YOLOv8 classification model
-    model = YOLO('yolov8n-cls.pt')  # Load YOLOv8 classification model
+    model = YOLO('yolov8n-cls.pt', weights_only=True)  # Load YOLOv8 classification model
     
     print("Model loaded successfully!")
     print(f"Training on dataset: {dataset_path}")
