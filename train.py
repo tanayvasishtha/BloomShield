@@ -33,6 +33,7 @@ def load_data():
     class_to_idx = {}
     idx = 0
     def process_images(images, labels):
+        nonlocal idx
         for img in images:
             base = os.path.basename(img)
             parts = base.split('_', 1)
