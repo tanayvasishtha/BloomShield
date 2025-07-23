@@ -1,8 +1,8 @@
 import sys
-sys.path.append('yolov9')
-from models.common import DetectMultiBackend
-from utils.general import non_max_suppression, scale_coords
-from utils.torch_utils import select_device
+sys.path.append(os.path.abspath('yolov9'))
+from yolov9.models.common import DetectMultiBackend
+from yolov9.utils.general import non_max_suppression, scale_coords
+from yolov9.utils.torch_utils import select_device
 import torch
 import time
 import os
