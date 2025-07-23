@@ -39,26 +39,40 @@ def prepare_yolo_dataset():
                 if not os.path.exists(dst):
                     shutil.copy2(src, dst)
     
-    print(f"YOLO dataset prepared in {yolo_root}/")
-    return yolo_root
+    # Create data.yaml
+    classes = sorted(os.listdir(f'{yolo_root}/train'))
+    yaml_content = f"""
+path: {os.path.abspath(yolo_root)}
+train: train
+val: val
+nc: {len(classes)}
+names:
+"""
+    for i, cls in enumerate(classes):
+        yaml_content += f"  {i}: {cls}
+"
+    with open('data.yaml', 'w') as f:
+        f.write(yaml_content)
+    print("data.yaml created")
+    return os.path.abspath('data.yaml')  # Return yaml path
 
 def train_yolo_model():
-    print("Starting YOLOv9 Classification Training...")
+    print("Starting YOLOv8 Classification Training...")
     
     # Prepare dataset
-    dataset_path = prepare_yolo_dataset()
+    dataset_yaml = prepare_yolo_dataset()
     
     # Load YOLOv8 classification model
     model = YOLO('yolov8n-cls.pt')  # Load YOLOv8 classification model
     
     print("Model loaded successfully!")
-    print(f"Training on dataset: {dataset_path}")
+    print(f"Training on dataset: {dataset_yaml}")
     
     start_time = time.time()
     
     # Train the model
     results = model.train(
-        data=dataset_path,
+        data=dataset_yaml,
         epochs=10,
         imgsz=224,
         batch=16,
