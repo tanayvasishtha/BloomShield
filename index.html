@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <title>BloomShield</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>BloomShield</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#community">Community</a>
+        </nav>
+    </header>
+    <main>
+        <section id="upload">
+            <h2>Upload Plant Image</h2>
+            <form id="upload-form">
+                <input type="file" id="file-input" accept="image/*">
+                <button type="submit">Analyze</button>
+            </form>
+            <div id="result"></div>
+        </section>
+        <section id="community">
+            <h2>Contribute to Community</h2>
+            <form id="community-form">
+                <input type="file" id="community-file" accept="image/*">
+                <input type="text" id="label" placeholder="Disease Label">
+                <button type="submit">Upload</button>
+            </form>
+            <div id="community-result"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; BloomShield 2024 | <a href="https://github.com/tanayvasishtha/BloomShield">GitHub Repo</a></p>
+    </footer>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file-input').files[0]);
+            const response = await fetch('/predict', { method: 'POST', body: formData });
+            const data = await response.json();
+            document.getElementById('result').innerHTML = `<p>Disease: ${data.class}</p><p>Suggestion: ${data.suggestion}</p>`;
+        });
+        document.getElementById('community-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('community-file').files[0]);
+            formData.append('label', document.getElementById('label').value);
+            const response = await fetch('/community_upload', { method: 'POST', body: formData });
+            const data = await response.json();
+            document.getElementById('community-result').innerHTML = `<p>${data.message}</p>`;
+        });
+    </script>
+</body>
+
+</html>
