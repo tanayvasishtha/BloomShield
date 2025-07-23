@@ -7,6 +7,7 @@ from PIL import Image
 import os
 import glob
 import random
+import time
 
 class PlantDataset(Dataset):
     def __init__(self, image_paths, labels, transform=None):
@@ -98,7 +99,9 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
+    start_time = time.time()
     for epoch in range(8):
+        epoch_start = time.time()
         model.train()
         running_loss = 0.0
         for inputs, labels in train_loader:
@@ -122,6 +125,10 @@ if __name__ == "__main__":
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
         print(f"Validation Accuracy: {100 * correct / total} %")
+        epoch_time = time.time() - epoch_start
+        print(f"Epoch {epoch+1} time: {epoch_time:.2f} seconds")
 
+    total_time = time.time() - start_time
+    print(f"Total training time: {total_time:.2f} seconds")
     torch.save(model.state_dict(), 'bloomshield_model.pth')
     print("Model saved as bloomshield_model.pth") 
