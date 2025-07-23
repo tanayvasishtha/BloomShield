@@ -100,7 +100,7 @@ if __name__ == "__main__":
     model.to(device)
 
     start_time = time.time()
-    for epoch in range(4):
+    for epoch in range(6):
         epoch_start = time.time()
         model.train()
         running_loss = 0.0
