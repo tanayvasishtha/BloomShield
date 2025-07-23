@@ -1,11 +1,11 @@
 import sys
+import os
 sys.path.append(os.path.abspath('yolov9'))
 from yolov9.models.common import DetectMultiBackend
 from yolov9.utils.general import non_max_suppression, scale_coords
 from yolov9.utils.torch_utils import select_device
 import torch
 import time
-import os
 import shutil
 from PIL import Image
 import numpy as np
