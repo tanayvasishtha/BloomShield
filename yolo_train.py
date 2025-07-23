@@ -48,8 +48,8 @@ def train_yolo_model():
     # Prepare dataset
     dataset_path = prepare_yolo_dataset()
     
-    # Load YOLOv9 model for classification
-    model = YOLO('yolov9c-cls.pt')  # YOLOv9 classification model
+    # Load YOLOv8 classification model
+    model = YOLO('yolov8n-cls.pt')  # Load YOLOv8 classification model
     
     print("Model loaded successfully!")
     print(f"Training on dataset: {dataset_path}")
@@ -61,8 +61,8 @@ def train_yolo_model():
         data=dataset_path,
         epochs=10,
         imgsz=224,
-        batch=16,  # Smaller batch for CPU
-        device='cpu',  # Force CPU since you have i5
+        batch=16,
+        device='cpu',
         project='runs/classify',
         name='bloomshield',
         verbose=True,
