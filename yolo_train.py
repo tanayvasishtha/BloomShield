@@ -41,16 +41,13 @@ def prepare_yolo_dataset():
     
     # Create data.yaml
     classes = sorted(os.listdir(f'{yolo_root}/train'))
-    yaml_content = f"""
-path: {os.path.abspath(yolo_root)}
+    yaml_content = f'''path: {os.path.abspath(yolo_root)}
 train: train
 val: val
 nc: {len(classes)}
-names:
-"""
+names:''' 
     for i, cls in enumerate(classes):
-        yaml_content += f"  {i}: {cls}
-"
+        yaml_content += f'\n  {i}: {cls}'
     with open('data.yaml', 'w') as f:
         f.write(yaml_content)
     print("data.yaml created")
