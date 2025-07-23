@@ -41,35 +41,26 @@ def prepare_yolo_dataset():
     
     # Create data.yaml
     classes = sorted(os.listdir(f'{yolo_root}/train'))
-    yaml_content = f'''path: {os.path.abspath(yolo_root)}
-train: train
-val: val
-nc: {len(classes)}
-names:''' 
-    for i, cls in enumerate(classes):
-        yaml_content += f'\n  {i}: {cls}'
-    with open('data.yaml', 'w') as f:
-        f.write(yaml_content)
-    print("data.yaml created")
-    return os.path.abspath('data.yaml')  # Return yaml path
+    print(f"Number of classes: {len(classes)}")
+    return os.path.abspath(yolo_root)  # Return folder path
 
 def train_yolo_model():
     print("Starting YOLOv8 Classification Training...")
     
     # Prepare dataset
-    dataset_yaml = prepare_yolo_dataset()
+    dataset_path = prepare_yolo_dataset()
     
     # Load YOLOv8 classification model
     model = YOLO('yolov8n-cls.pt')  # Load YOLOv8 classification model
     
     print("Model loaded successfully!")
-    print(f"Training on dataset: {dataset_yaml}")
+    print(f"Training on dataset: {dataset_path}")
     
     start_time = time.time()
     
     # Train the model
     results = model.train(
-        data=dataset_yaml,
+        data=dataset_path,
         epochs=10,
         imgsz=224,
         batch=16,
@@ -79,7 +70,8 @@ def train_yolo_model():
         verbose=True,
         patience=50,
         save=True,
-        plots=True
+        plots=True,
+        augment=False  # Disable augmentation to avoid error
     )
     
     total_time = time.time() - start_time
