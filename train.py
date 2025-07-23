@@ -8,6 +8,7 @@ import os
 import glob
 import random
 import time
+import sys
 
 class PlantDataset(Dataset):
     def __init__(self, image_paths, labels, transform=None):
@@ -73,6 +74,7 @@ class SimpleCNN(nn.Module):
         return x
 
 if __name__ == "__main__":
+    sys.stdout = open('training_log.txt', 'w')
     train_images, train_labels, valid_images, valid_labels, test_images, test_labels, class_to_idx = load_data()
     num_classes = len(class_to_idx)
     print(f"Number of classes: {num_classes}")
@@ -131,4 +133,5 @@ if __name__ == "__main__":
     total_time = time.time() - start_time
     print(f"Total training time: {total_time:.2f} seconds")
     torch.save(model.state_dict(), 'bloomshield_model.pth')
-    print("Model saved as bloomshield_model.pth") 
+    print("Model saved as bloomshield_model.pth")
+    sys.stdout.close() 
