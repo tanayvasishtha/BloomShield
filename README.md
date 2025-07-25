@@ -1,4 +1,4 @@
-# 🌱 BloomShield - AI-Powered Crop Disease Detection
+# BloomShield - AI-Powered Crop Disease Detection
 
 **Built for "Build Real ML Web Apps" Hackathon 2024**
 
@@ -6,7 +6,7 @@ BloomShield is an advanced web application that empowers farmers to detect crop 
 
 ![BloomShield Demo](https://img.shields.io/badge/Model-YOLOv8m-green) ![Dataset](https://img.shields.io/badge/Dataset-87K%2B%20Images-blue) ![Accuracy](https://img.shields.io/badge/Accuracy-85%2B%25-brightgreen)
 
-## 🎯 Project Overview
+## Project Overview
 
 ### Problem Statement
 Crop diseases cause billions in agricultural losses annually. Farmers often lack immediate access to expert diagnosis, leading to delayed treatment and reduced yields. BloomShield bridges this gap with instant AI-powered disease detection.
@@ -17,24 +17,24 @@ Crop diseases cause billions in agricultural losses annually. Farmers often lack
 - **Community-Driven Improvement**: Farmers contribute data to continuously improve the model
 - **Accessible Web Interface**: Works on any device with a camera and internet connection
 
-## 🚀 Key Features
+## Key Features
 
 ### Core Functionality
-- ✅ **YOLOv8m Disease Detection**: Trained on 87K+ labeled images
-- ✅ **38+ Disease Classes**: Covers major crops (Apple, Corn, Grape, Potato, Tomato)
-- ✅ **Real-time Analysis**: Get results in seconds
-- ✅ **Treatment Recommendations**: Detailed treatment and prevention advice
-- ✅ **Severity Assessment**: Understand disease impact levels
-- ✅ **Community Uploads**: Help improve the model with your data
+- **YOLOv8m Disease Detection**: Trained on 87K+ labeled images
+- **38+ Disease Classes**: Covers major crops (Apple, Corn, Grape, Potato, Tomato)
+- **Real-time Analysis**: Get results in seconds
+- **Treatment Recommendations**: Detailed treatment and prevention advice
+- **Severity Assessment**: Understand disease impact levels
+- **Community Uploads**: Help improve the model with your data
 
 ### Technical Features
-- 🔧 **Swiss-Style UI**: Clean, minimalist design with professional aesthetics
-- 📱 **Responsive Design**: Works perfectly on desktop, tablet, and mobile
-- ⚡ **Fast Inference**: Optimized for quick predictions
-- 💾 **Data Collection**: SQLite database for community contributions
-- 🔐 **Secure Upload**: Safe image processing and storage
+- **Swiss-Style UI**: Clean, minimalist design with professional aesthetics
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Fast Inference**: Optimized for quick predictions
+- **Data Collection**: SQLite database for community contributions
+- **Secure Upload**: Safe image processing and storage
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Machine Learning
 - **Model**: YOLOv8m (Medium variant for speed/accuracy balance)
@@ -55,7 +55,7 @@ Crop diseases cause billions in agricultural losses annually. Farmers often lack
 - **Typography**: Inter font family
 - **Layout**: CSS Grid, responsive design
 
-## 📊 Model Performance
+## Model Performance
 
 ### Training Results
 - **Dataset**: New Plant Diseases Dataset
@@ -72,7 +72,7 @@ Crop diseases cause billions in agricultural losses annually. Farmers often lack
 **Potato**: Early Blight, Late Blight, Healthy  
 **Tomato**: Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Healthy
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 ```bash
@@ -131,7 +131,7 @@ Open `http://localhost:5000` in your browser
    PYTHON_VERSION=3.9.16
    ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 BloomShield/
@@ -153,7 +153,7 @@ BloomShield/
 └── runs/           # Training logs and results
 ```
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 ### Swiss Design Principles
 - **Minimalism**: Clean, uncluttered interface
@@ -170,7 +170,7 @@ BloomShield/
 - **Accessibility**: Clear contrast, readable fonts
 - **Progressive Enhancement**: Works without JavaScript basics
 
-## 🌱 Agricultural Impact
+## Agricultural Impact
 
 ### Benefits for Farmers
 - **Early Detection**: Catch diseases before significant damage
@@ -185,40 +185,40 @@ BloomShield/
 - **Knowledge Base**: Crowd-sourced disease identification
 - **Farmer Network**: Connect with agricultural community
 
-## 🏆 Hackathon Criteria Alignment
+## Hackathon Criteria Alignment
 
-### ✅ Trained Models (Primary Focus)
+### Trained Models (Primary Focus)
 - YOLOv8m trained from scratch on 87K+ images
 - Custom disease detection model for agriculture
 - Comprehensive training logs and validation metrics
 - Model optimization for production deployment
 
-### ✅ Open Source (Full Repository)
+### Open Source (Full Repository)
 - Complete codebase available on GitHub
 - Detailed documentation and setup instructions
 - MIT License for community use
 - Reproducible training pipeline
 
-### ✅ Originality
+### Originality
 - Novel application of YOLO for crop disease detection
 - Swiss-style UI design specifically for agricultural use
 - Community-driven model improvement system
 - Comprehensive treatment recommendation database
 
-### ✅ Usefulness
+### Usefulness
 - Addresses real agricultural challenges
 - Immediate practical value for farmers
 - Scalable solution for global agriculture
 - Potential for significant economic impact
 
-### ✅ Best Documentation
+### Best Documentation
 - Comprehensive README with setup instructions
 - Code comments and documentation
 - Training methodology explanation
 - User interface guidelines
 - Deployment instructions
 
-## 📈 Future Enhancements
+## Future Enhancements
 
 ### Technical Roadmap
 - [ ] **Model Improvements**: Larger datasets, ensemble methods
@@ -234,7 +234,7 @@ BloomShield/
 - [ ] **Marketplace Integration**: Link to treatment suppliers
 - [ ] **IoT Integration**: Connect with farm sensors
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the agricultural and ML communities!
 
@@ -252,18 +252,18 @@ We welcome contributions from the agricultural and ML communities!
 - Documentation improvements
 - Mobile app development
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Dataset**: New Plant Diseases Dataset from Kaggle
 - **YOLOv8**: Ultralytics team for the excellent framework
 - **Community**: Agricultural researchers and farmers for domain expertise
 - **Hackathon**: "Build Real ML Web Apps" organizers for the opportunity
 
-## 📞 Contact
+## Contact
 
 **Project Maintainer**: [Your Name]  
 **Email**: [your.email@domain.com]  
@@ -272,7 +272,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🎬 Demo Video Script (3 Minutes)
+## Demo Video Script (3 Minutes)
 
 ### Opening (0:00-0:20)
 "Hi! I'm [Name], and this is BloomShield - an AI-powered crop disease detection system I built for the Build Real ML Web Apps hackathon. Every year, crop diseases cause billions in agricultural losses. BloomShield helps farmers identify diseases instantly and get expert treatment recommendations."
@@ -294,4 +294,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**🌱 Built with ❤️ for farmers worldwide** 
+**Built with care for farmers worldwide** 
