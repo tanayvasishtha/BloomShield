@@ -200,28 +200,54 @@ TREATMENT_SUGGESTIONS = {
 }
 
 def load_model():
-    """Load YOLOv8m HIGH-ACCURACY model (99.7% accuracy!)"""
+    """Load YOLOv8 model with fallback options for production deployment"""
     global model, class_names
     
-    # Use the high-accuracy model trained with 99.7% accuracy
-    model_path = 'models/bloomshield_yolov8m_high_accuracy_fixed.pt'
+    # Try multiple model paths in order of preference
+    model_paths = [
+        'models/bloomshield_yolov8m_high_accuracy_fixed.pt',  # Custom trained model
+        'yolov8n-cls.pt',  # Lightweight fallback
+        'yolov8s-cls.pt'   # Small fallback
+    ]
     
-    if not os.path.exists(model_path):
-        print(f"ERROR: High-accuracy model not found at {model_path}")
-        print("Using fallback model...")
-        model_path = 'yolov8n-cls.pt'  # Fallback to basic model
+    for model_path in model_paths:
+        try:
+            print(f"Attempting to load model: {model_path}")
+            
+            # Check if custom model exists
+            if model_path.startswith('models/') and not os.path.exists(model_path):
+                print(f"Custom model not found at {model_path}, trying next option...")
+                continue
+            
+            # Load model with memory optimization
+            model = YOLO(model_path)
+            
+            # Verify model loaded correctly
+            if hasattr(model, 'names') and model.names:
+                class_names = list(model.names.values())
+                
+                # Success message based on model type
+                if 'bloomshield' in model_path:
+                    print(f"SUCCESS: HIGH-ACCURACY Custom Model loaded!")
+                    print(f"Performance: 99.7% Top-1 Accuracy, 100% Top-5 Accuracy")
+                else:
+                    print(f"SUCCESS: Fallback Model loaded: {model_path}")
+                    print(f"Note: Using YOLOv8 pretrained model for demo purposes")
+                
+                print(f"Classes: {len(class_names)} disease types")
+                print(f"Model: {model_path}")
+                return True
+            else:
+                print(f"Model loaded but no class names found: {model_path}")
+                continue
+                
+        except Exception as e:
+            print(f"Failed to load {model_path}: {str(e)}")
+            continue
     
-    try:
-        model = YOLO(model_path)
-        class_names = list(model.names.values())
-        print(f"SUCCESS: HIGH-ACCURACY Model loaded successfully!")
-        print(f"Performance: 99.7% Top-1 Accuracy, 100% Top-5 Accuracy")
-        print(f"Classes: {len(class_names)} disease types")
-        print(f"Model: {model_path}")
-        return True
-    except Exception as e:
-        print(f"ERROR: Error loading model: {str(e)}")
-        return False
+    # If all models fail
+    print("ERROR: Could not load any model. Please check model files.")
+    return False
 
 def setup_database():
     """Initialize SQLite database for community uploads"""
@@ -250,20 +276,47 @@ def index():
 def predict():
     """Predict crop disease from uploaded image"""
     if not model:
-        return jsonify({'error': 'Model not loaded. Please check server logs.'}), 500
+        return jsonify({
+            'success': False,
+            'error': 'AI model not available',
+            'message': 'The disease detection model is currently unavailable. Please try again later or contact support.'
+        }), 500
     
     if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
+        return jsonify({
+            'success': False,
+            'error': 'No file uploaded',
+            'message': 'Please select an image file to analyze.'
+        }), 400
     
     file = request.files['file']
     if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
+        return jsonify({
+            'success': False,
+            'error': 'No file selected',
+            'message': 'Please choose an image file before analyzing.'
+        }), 400
+    
+    # Check file type
+    allowed_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff'}
+    file_ext = os.path.splitext(file.filename.lower())[1]
+    if file_ext not in allowed_extensions:
+        return jsonify({
+            'success': False,
+            'error': 'Invalid file type',
+            'message': 'Please upload a valid image file (JPG, PNG, BMP, or TIFF).'
+        }), 400
     
     try:
-        # Read and process image
+        # Read and process image with size limits for memory efficiency
         image = Image.open(file.stream).convert('RGB')
         
-        # Run YOLOv8m prediction
+        # Resize large images to prevent memory issues
+        max_size = (640, 640)
+        if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
+            image.thumbnail(max_size, Image.Resampling.LANCZOS)
+        
+        # Run YOLOv8 prediction
         results = model(image)
         
         # Process results
@@ -314,7 +367,15 @@ def predict():
             })
             
     except Exception as e:
-        return jsonify({'error': f'Prediction failed: {str(e)}'}), 500
+        error_msg = str(e)
+        print(f"Prediction error: {error_msg}")  # Log for debugging
+        
+        return jsonify({
+            'success': False,
+            'error': 'Analysis failed',
+            'message': 'Unable to analyze the image. Please ensure it\'s a clear photo of a plant and try again.',
+            'technical_details': error_msg if app.debug else None
+        }), 500
 
 @app.route('/community_upload', methods=['POST'])
 def community_upload():

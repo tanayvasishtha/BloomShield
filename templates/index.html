@@ -31,10 +31,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
 
-    <!-- Preload critical resources -->
-    <link rel="preload" href="{{ url_for('static', filename='style.css') }}" as="style">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        as="style" crossorigin>
+    <!-- DNS prefetch for better performance -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
 </head>
 
 <body>
@@ -640,13 +638,7 @@
             }
         });
 
-        // Performance: Preload critical resources
-        const preloadLink = document.createElement('link');
-        preloadLink.rel = 'preload';
-        preloadLink.href = '/predict';
-        preloadLink.as = 'fetch';
-        preloadLink.crossOrigin = 'anonymous';
-        document.head.appendChild(preloadLink);
+        // Note: Removed preload to prevent unused resource warnings
 
         // Initialize tooltips and progressive enhancement
         document.addEventListener('DOMContentLoaded', () => {
