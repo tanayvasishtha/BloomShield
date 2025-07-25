@@ -877,6 +877,8 @@ h6 {
     padding: var(--spacing-lg);
     border: var(--border-width) solid var(--color-black);
     height: fit-content;
+    box-shadow: var(--shadow);
+    transform: translate(-2px, -2px);
 }
 
 .tech-specs h3 {
