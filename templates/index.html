@@ -428,7 +428,17 @@
 
         // Enhanced results display
         function displayResults(data) {
-            document.getElementById('disease-name').textContent = data.predicted_class || 'Unknown Disease';
+            const isHealthy = data.is_healthy || false;
+            const diseaseNameElement = document.getElementById('disease-name');
+
+            // Update header based on plant health status
+            if (isHealthy) {
+                diseaseNameElement.textContent = data.plant_status || 'Plant is Healthy';
+                diseaseNameElement.style.color = 'var(--color-green)';
+            } else {
+                diseaseNameElement.textContent = data.disease_info?.disease || data.predicted_class || 'Disease Detected';
+                diseaseNameElement.style.color = 'var(--color-black)';
+            }
 
             const confidence = (data.confidence || 0) * 100;
             document.getElementById('disease-confidence').textContent = `Confidence: ${confidence.toFixed(1)}%`;
@@ -445,10 +455,38 @@
                 confidenceBadge.className = 'confidence-badge low';
             }
 
-            document.getElementById('disease-description').textContent =
-                data.disease_info?.description || 'Disease information not available.';
+            // Update section titles and content based on health status
+            const infoSectionTitle = document.querySelector('.disease-info h4');
+            const treatmentSectionTitle = document.querySelector('.treatment-info h4');
+
+            if (isHealthy) {
+                infoSectionTitle.textContent = 'Plant Assessment';
+                treatmentSectionTitle.textContent = 'Care Recommendations';
+            } else {
+                infoSectionTitle.textContent = 'Disease Information';
+                treatmentSectionTitle.textContent = 'Treatment & Prevention';
+            }
+
+            // Update description based on health status
+            const descriptionText = isHealthy
+                ? (data.disease_info?.assessment || 'Your plant appears healthy with no signs of disease.')
+                : (data.disease_info?.description || 'Disease information not available.');
+
+            document.getElementById('disease-description').textContent = descriptionText;
+            // Update treatment and prevention section titles
+            const treatmentSubTitle = document.querySelector('.treatment-section h5');
+            const preventionSubTitle = document.querySelector('.prevention-section h5');
+
+            if (isHealthy) {
+                treatmentSubTitle.textContent = 'Care Instructions';
+                preventionSubTitle.textContent = 'Maintenance Tips';
+            } else {
+                treatmentSubTitle.textContent = 'Treatment';
+                preventionSubTitle.textContent = 'Prevention';
+            }
+
             document.getElementById('treatment-text').textContent =
-                data.disease_info?.treatment || 'Treatment information not available.';
+                data.disease_info?.treatment || 'Care information not available.';
             document.getElementById('prevention-text').textContent =
                 data.disease_info?.prevention || 'Prevention information not available.';
 

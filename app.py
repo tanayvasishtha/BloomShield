@@ -42,16 +42,20 @@ TREATMENT_SUGGESTIONS = {
         'severity': 'Moderate'
     },
     'Apple___healthy': {
-        'disease': 'Healthy Apple',
-        'treatment': 'No treatment needed. Continue regular care and monitoring.',
+        'status': 'Healthy',
+        'disease': 'No Disease Detected',
+        'assessment': 'Your apple plant appears healthy with no signs of disease.',
+        'treatment': 'No treatment required. Continue with regular care and monitoring.',
         'prevention': 'Maintain proper watering, fertilization, and pruning schedule.',
-        'severity': 'None'
+        'severity': 'Healthy'
     },
     'Apple_Apple': {
-        'disease': 'Healthy Apple',
-        'treatment': 'No treatment needed. Your apple appears healthy! Continue with regular care and monitoring.',
+        'status': 'Healthy',
+        'disease': 'No Disease Detected',
+        'assessment': 'Your apple plant appears healthy with no signs of disease.',
+        'treatment': 'No treatment required. Continue with regular care and monitoring.',
         'prevention': 'Maintain proper pruning, adequate spacing for air circulation, balanced nutrition, and regular inspection for early disease detection.',
-        'severity': 'None'
+        'severity': 'Healthy'
     },
     'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
         'disease': 'Corn Gray Leaf Spot',
@@ -376,10 +380,17 @@ def predict():
                 image.save(img_buffer, format='JPEG')
                 img_base64 = base64.b64encode(img_buffer.getvalue()).decode()
                 
+                # Determine if plant is healthy or diseased
+                is_healthy = ('healthy' in predicted_class.lower() or 
+                            treatment_info.get('severity') == 'Healthy' or
+                            'healthy' in treatment_info.get('disease', '').lower())
+                
                 response = {
                     'success': True,
                     'predicted_class': predicted_class,
                     'confidence': confidence,
+                    'is_healthy': is_healthy,
+                    'plant_status': 'Healthy' if is_healthy else 'Disease Detected',
                     'disease_info': treatment_info,
                     'image_data': f"data:image/jpeg;base64,{img_base64}",
                     'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
