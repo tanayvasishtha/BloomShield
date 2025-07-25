@@ -47,6 +47,12 @@ TREATMENT_SUGGESTIONS = {
         'prevention': 'Maintain proper watering, fertilization, and pruning schedule.',
         'severity': 'None'
     },
+    'Apple_Apple': {
+        'disease': 'Healthy Apple',
+        'treatment': 'No treatment needed. Your apple appears healthy! Continue with regular care and monitoring.',
+        'prevention': 'Maintain proper pruning, adequate spacing for air circulation, balanced nutrition, and regular inspection for early disease detection.',
+        'severity': 'None'
+    },
     'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': {
         'disease': 'Corn Gray Leaf Spot',
         'treatment': 'Apply fungicides containing strobilurin or triazole. Rotate crops.',
@@ -330,13 +336,40 @@ def predict():
                 class_id = int(result.probs.top1)
                 predicted_class = model.names[class_id]
                 
-                # Get treatment suggestion
-                treatment_info = TREATMENT_SUGGESTIONS.get(predicted_class, {
-                    'disease': predicted_class.replace('_', ' ').title(),
-                    'treatment': 'Consult with local agricultural extension service for specific treatment recommendations.',
-                    'prevention': 'Follow good agricultural practices and regular monitoring.',
-                    'severity': 'Unknown'
-                })
+                # Debug logging
+                print(f"Detected class: '{predicted_class}' with confidence {confidence:.3f}")
+                
+                # Get treatment suggestion with better class name matching
+                # Handle different class name formats
+                treatment_info = None
+                
+                # Try exact match first
+                if predicted_class in TREATMENT_SUGGESTIONS:
+                    treatment_info = TREATMENT_SUGGESTIONS[predicted_class]
+                    print(f"Found treatment info using exact match: '{predicted_class}'")
+                else:
+                    # Try common variations
+                    variations = [
+                        predicted_class.replace('_', '___'),  # Apple_Apple -> Apple___Apple
+                        predicted_class.replace('__', '___'), # Apple__Apple -> Apple___Apple
+                        predicted_class + '_scab',            # Apple_Apple -> Apple_Apple_scab
+                        predicted_class.replace('_Apple', '___Apple_scab'), # Apple_Apple -> Apple___Apple_scab
+                    ]
+                    
+                    for variation in variations:
+                        if variation in TREATMENT_SUGGESTIONS:
+                            treatment_info = TREATMENT_SUGGESTIONS[variation]
+                            print(f"Found treatment info using variation: '{variation}'")
+                            break
+                
+                # Fallback if no match found
+                if not treatment_info:
+                    treatment_info = {
+                        'disease': predicted_class.replace('_', ' ').title(),
+                        'treatment': 'Consult with local agricultural extension service for specific treatment recommendations.',
+                        'prevention': 'Follow good agricultural practices and regular monitoring.',
+                        'severity': 'Unknown'
+                    }
                 
                 # Convert image to base64 for display
                 img_buffer = io.BytesIO()
