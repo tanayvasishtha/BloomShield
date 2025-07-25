@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="BloomShield - Professional AI-powered crop disease detection with 99.7% accuracy. Upload plant images for instant disease identification and treatment recommendations.">
+    <meta name="keywords"
+        content="crop disease detection, AI agriculture, plant pathology, precision farming, YOLOv8, machine learning">
+    <meta name="author" content="BloomShield">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bloomshield.com/">
+    <meta property="og:title" content="BloomShield - AI Crop Disease Detection">
+    <meta property="og:description"
+        content="Professional AI-powered crop disease detection with 99.7% accuracy. Instant disease identification and treatment recommendations.">
+    <meta property="og:image" content="/static/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bloomshield.com/">
+    <meta property="twitter:title" content="BloomShield - AI Crop Disease Detection">
+    <meta property="twitter:description" content="Professional AI-powered crop disease detection with 99.7% accuracy.">
+    <meta property="twitter:image" content="/static/og-image.jpg">
+
+    <title>BloomShield - AI Crop Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ url_for('static', filename='style.css') }}" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        as="style" crossorigin>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden" role="status" aria-label="Processing your image">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <p class="loading-text">Analyzing your crop image...</p>
+            <p class="loading-subtext">This may take a few seconds</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="nav-brand">
+                <h1 class="logo">BloomShield</h1>
+                <span class="tagline">99.7% Accuracy AI Detection</span>
+            </div>
+            <nav class="nav" role="navigation" aria-label="Main navigation">
+                <a href="#home" class="nav-link" aria-label="Go to home section">Home</a>
+                <a href="#detect" class="nav-link" aria-label="Go to detection section">Detect</a>
+                <a href="#community" class="nav-link" aria-label="Go to community section">Community</a>
+                <a href="#about" class="nav-link" aria-label="Go to about section">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">AI-Powered Crop Disease Detection</h1>
+                    <p class="hero-subtitle">Upload an image of your crop and get instant disease detection with
+                        treatment recommendations using our YOLOv8m deep learning model.</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">99.7%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">32</span>
+                            <span class="stat-label">Disease Types</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">
+                                < 1s</span>
+                                    <span class="stat-label">Detection Time</span>
+                        </div>
+                    </div>
+                    <a href="#detect" class="cta-button" aria-label="Start disease detection">Start Detection</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detection Section -->
+        <section id="detect" class="detection-section">
+            <div class="container">
+                <h2 class="section-title">Disease Detection</h2>
+                <p class="section-subtitle">Upload a clear image of your crop for AI-powered disease analysis</p>
+
+                <!-- Upload Area -->
+                <div class="upload-area" id="upload-area" tabindex="0" role="button"
+                    aria-label="Click or drag to upload image"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){document.getElementById('file-input').click()}">
+                    <h3>Upload Plant Image</h3>
+                    <p>Drag and drop your image here, or click to browse</p>
+                    <p class="upload-info">Supported formats: JPG, PNG, JPEG (Max: 10MB)</p>
+                    <input type="file" id="file-input" class="file-input" accept="image/*" required
+                        aria-describedby="file-help">
+                    <small id="file-help" class="sr-only">Choose an image file of your crop or plant for disease
+                        analysis</small>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="image-preview" class="image-preview" style="display: none;" role="img"
+                    aria-label="Uploaded image preview">
+                    <img id="preview-img" src="" alt="Uploaded crop image for analysis">
+                    <div class="image-actions">
+                        <button id="analyze-btn" class="analyze-btn" onclick="analyzeImage()"
+                            aria-describedby="analyze-help" disabled>
+                            <span class="btn-text">Analyze Image</span>
+                            <span class="btn-spinner hidden" aria-hidden="true"></span>
+                        </button>
+                        <button id="clear-btn" class="clear-btn" onclick="clearImage()"
+                            aria-label="Clear selected image">
+                            Clear Image
+                        </button>
+                    </div>
+                    <small id="analyze-help" class="sr-only">Click to start AI analysis of your uploaded crop
+                        image</small>
+                </div>
+
+                <!-- Results Section -->
+                <div id="result" class="result-section" style="display: none;" role="region"
+                    aria-label="Analysis results">
+                    <div class="result-header">
+                        <h3 id="disease-name" aria-label="Detected disease name">Disease Detected</h3>
+                        <div class="result-meta">
+                            <span id="confidence-badge" class="confidence-badge" aria-label="Confidence level">High
+                                Confidence</span>
+                            <span id="disease-confidence" class="confidence-percentage"
+                                aria-label="Confidence percentage">Confidence: 95%</span>
+                        </div>
+                    </div>
+                    <div class="result-content">
+                        <div class="disease-info">
+                            <h4>Disease Information</h4>
+                            <p id="disease-description" aria-label="Disease description">Detailed information about the
+                                detected disease will appear here.</p>
+                        </div>
+                        <div class="treatment-info">
+                            <h4>Treatment & Prevention</h4>
+                            <div class="treatment-content">
+                                <div class="treatment-section">
+                                    <h5>Treatment</h5>
+                                    <p id="treatment-text" aria-label="Treatment recommendations">Treatment
+                                        recommendations will appear here.</p>
+                                </div>
+                                <div class="prevention-section">
+                                    <h5>Prevention</h5>
+                                    <p id="prevention-text" aria-label="Prevention measures">Prevention measures will
+                                        appear here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="error-display hidden" role="alert" aria-live="polite">
+                    <h4>Analysis Failed</h4>
+                    <p id="error-message">An error occurred during analysis. Please try again.</p>
+                    <button onclick="hideError()" class="error-dismiss" aria-label="Dismiss error message">×</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section id="community" class="community-section">
+            <div class="container">
+                <h2 class="section-title">Community Contributions</h2>
+                <p class="section-subtitle">Help improve our AI model by contributing labeled images</p>
+
+                <div class="contribution-form">
+                    <h3>Upload & Label</h3>
+                    <form id="community-form" novalidate aria-label="Community contribution form">
+                        <div class="form-group">
+                            <label for="community-file">Select Image: <span class="required"
+                                    aria-label="required">*</span></label>
+                            <input type="file" id="community-file" accept="image/*" required
+                                aria-describedby="community-file-help" aria-invalid="false">
+                            <small id="community-file-help" class="field-help">Choose a clear image of a plant with or
+                                without disease</small>
+                            <div class="field-error hidden" role="alert" aria-live="polite"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="label">Disease Label: <span class="required"
+                                    aria-label="required">*</span></label>
+                            <input type="text" id="label" placeholder="e.g., Apple_Scab, Tomato_Blight, Healthy"
+                                required aria-describedby="label-help" aria-invalid="false" maxlength="100">
+                            <small id="label-help" class="field-help">Enter the specific disease name or "Healthy" if no
+                                disease is present</small>
+                            <div class="field-error hidden" role="alert" aria-live="polite"></div>
+                        </div>
+                        <button type="submit" class="submit-btn" aria-describedby="submit-help">
+                            <span class="btn-text">Contribute</span>
+                            <span class="btn-spinner hidden" aria-hidden="true"></span>
+                        </button>
+                        <small id="submit-help" class="field-help">Your contribution helps improve our AI model for
+                            everyone</small>
+                    </form>
+                    <div id="community-result" class="community-result" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2 class="section-title">About BloomShield</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Advanced AI Technology</h3>
+                        <p>BloomShield uses state-of-the-art YOLOv8m deep learning models trained on over 70,000 crop
+                            images to deliver industry-leading 99.7% accuracy in disease detection.</p>
+
+                        <h3>Real-World Impact</h3>
+                        <p>Our platform helps farmers worldwide make informed decisions, reduce crop losses, and
+                            implement targeted treatment strategies for healthier, more productive agriculture.</p>
+
+                        <h3>Community-Driven</h3>
+                        <p>Continuously improving through community contributions, BloomShield evolves with real-world
+                            agricultural challenges and emerging disease patterns.</p>
+
+                        <h3>Connect with Us</h3>
+                        <p>Follow our journey and get updates on Twitter: <a href="https://x.com/TanayVasishtha"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Follow us on Twitter">@TanayVasishtha</a></p>
+                    </div>
+                    <div class="tech-specs">
+                        <h3>Technical Specifications</h3>
+                        <ul>
+                            <li><strong>Model:</strong> YOLOv8m Classification</li>
+                            <li><strong>Training Data:</strong> 70,000+ Images</li>
+                            <li><strong>Disease Classes:</strong> 32 Types</li>
+                            <li><strong>Processing Time:</strong> &lt;1 Second</li>
+                            <li><strong>Accuracy:</strong> 99.7% Top-1</li>
+                            <li><strong>Platform:</strong> PyTorch + Flask</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>BloomShield</h4>
+                    <p>Advanced AI-powered crop disease detection with 99.7% accuracy.</p>
+                    <p class="footer-note">Empowering farmers with intelligent agricultural solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <a href="https://github.com/tanayvasishtha/BloomShield" target="_blank" rel="noopener noreferrer"
+                        aria-label="View BloomShield on GitHub">GitHub Repository</a>
+                    <a href="#about" aria-label="Learn more about BloomShield">About</a>
+                    <a href="#community" aria-label="Contribute to community">Community</a>
+                    <a href="mailto:support@bloomshield.com" aria-label="Contact support">Support</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Technology</h4>
+                    <p>YOLOv8m • 25.9M Parameters</p>
+                    <p>Trained on 70K+ Images</p>
+                    <p>PyTorch • Flask • SQLite</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 BloomShield | Built for Agricultural Innovation</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced JavaScript with better error handling and accessibility
+        const fileInput = document.getElementById('file-input');
+        const uploadArea = document.getElementById('upload-area');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const result = document.getElementById('result');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const errorDisplay = document.getElementById('error-display');
+
+        // Constants
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+        // Enhanced file upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
+
+        // Drag and drop with better feedback
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+            uploadArea.setAttribute('aria-label', 'Drop your image here');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            uploadArea.setAttribute('aria-label', 'Click or drag to upload image');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            uploadArea.setAttribute('aria-label', 'Click or drag to upload image');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // Enhanced file validation and handling
+        function handleFileSelect(file) {
+            hideError();
+
+            // Validate file type
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                showError('Invalid file type. Please upload a JPG, PNG, or JPEG image.');
+                return;
+            }
+
+            // Validate file size
+            if (file.size > MAX_FILE_SIZE) {
+                showError('File too large. Please upload an image smaller than 10MB.');
+                return;
+            }
+
+            // Read and display file
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                previewImg.alt = `Preview of ${file.name}`;
+                imagePreview.style.display = 'block';
+                result.style.display = 'none';
+                analyzeBtn.disabled = false;
+
+                // Announce to screen readers
+                announceToScreenReader('Image uploaded successfully. Ready for analysis.');
+            };
+
+            reader.onerror = () => {
+                showError('Failed to read the selected file. Please try again.');
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Clear image with proper cleanup
+        function clearImage() {
+            fileInput.value = '';
+            previewImg.src = '';
+            imagePreview.style.display = 'none';
+            result.style.display = 'none';
+            analyzeBtn.disabled = true;
+            hideError();
+            announceToScreenReader('Image cleared.');
+        }
+
+        // Enhanced image analysis with loading states
+        async function analyzeImage() {
+            if (!fileInput.files[0]) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            setLoadingState(true);
+            hideError();
+
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayResults(data);
+                announceToScreenReader('Analysis complete. Results displayed below.');
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showError(`Analysis failed: ${error.message || 'Unknown error occurred'}`);
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        // Enhanced results display
+        function displayResults(data) {
+            document.getElementById('disease-name').textContent = data.predicted_class || 'Unknown Disease';
+
+            const confidence = (data.confidence || 0) * 100;
+            document.getElementById('disease-confidence').textContent = `Confidence: ${confidence.toFixed(1)}%`;
+
+            const confidenceBadge = document.getElementById('confidence-badge');
+            if (confidence > 90) {
+                confidenceBadge.textContent = 'High Confidence';
+                confidenceBadge.className = 'confidence-badge high';
+            } else if (confidence > 70) {
+                confidenceBadge.textContent = 'Medium Confidence';
+                confidenceBadge.className = 'confidence-badge medium';
+            } else {
+                confidenceBadge.textContent = 'Low Confidence';
+                confidenceBadge.className = 'confidence-badge low';
+            }
+
+            document.getElementById('disease-description').textContent =
+                data.disease_info?.description || 'Disease information not available.';
+            document.getElementById('treatment-text').textContent =
+                data.disease_info?.treatment || 'Treatment information not available.';
+            document.getElementById('prevention-text').textContent =
+                data.disease_info?.prevention || 'Prevention information not available.';
+
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Loading state management
+        function setLoadingState(loading) {
+            if (loading) {
+                analyzeBtn.disabled = true;
+                analyzeBtn.querySelector('.btn-text').textContent = 'Analyzing...';
+                analyzeBtn.querySelector('.btn-spinner').classList.remove('hidden');
+                loadingOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                analyzeBtn.disabled = false;
+                analyzeBtn.querySelector('.btn-text').textContent = 'Analyze Image';
+                analyzeBtn.querySelector('.btn-spinner').classList.add('hidden');
+                loadingOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Enhanced error handling
+        function showError(message) {
+            document.getElementById('error-message').textContent = message;
+            errorDisplay.classList.remove('hidden');
+            errorDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            announceToScreenReader(`Error: ${message}`);
+        }
+
+        function hideError() {
+            errorDisplay.classList.add('hidden');
+        }
+
+        // Screen reader announcements
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+
+        // Enhanced community form handling
+        document.getElementById('community-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+            const submitBtn = form.querySelector('.submit-btn');
+            const resultDiv = document.getElementById('community-result');
+
+            // Clear previous errors
+            form.querySelectorAll('.field-error').forEach(error => {
+                error.classList.add('hidden');
+                error.textContent = '';
+            });
+
+            // Validate form
+            const file = document.getElementById('community-file').files[0];
+            const label = document.getElementById('label').value.trim();
+
+            let hasError = false;
+
+            if (!file) {
+                showFieldError('community-file', 'Please select an image file.');
+                hasError = true;
+            } else if (!ALLOWED_TYPES.includes(file.type)) {
+                showFieldError('community-file', 'Please upload a JPG, JPEG, or PNG image.');
+                hasError = true;
+            } else if (file.size > MAX_FILE_SIZE) {
+                showFieldError('community-file', 'File size must be less than 10MB.');
+                hasError = true;
+            }
+
+            if (!label) {
+                showFieldError('label', 'Please enter a disease label.');
+                hasError = true;
+            } else if (label.length < 3) {
+                showFieldError('label', 'Label must be at least 3 characters long.');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Submit form
+            setSubmitLoading(submitBtn, true);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('label', label);
+
+                const response = await fetch('/community_upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success-message">
+                            <strong>Success!</strong> Thank you for your contribution. Your labeled image helps improve our AI model.
+                        </div>
+                    `;
+                    form.reset();
+                    announceToScreenReader('Contribution submitted successfully.');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error-message">
+                            <strong>Upload Failed:</strong> ${data.error || 'Unknown error occurred'}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>Network Error:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                setSubmitLoading(submitBtn, false);
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+
+        // Field error display
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = field.parentNode.querySelector('.field-error');
+
+            field.setAttribute('aria-invalid', 'true');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        // Submit button loading state
+        function setSubmitLoading(btn, loading) {
+            if (loading) {
+                btn.disabled = true;
+                btn.querySelector('.btn-text').textContent = 'Uploading...';
+                btn.querySelector('.btn-spinner').classList.remove('hidden');
+            } else {
+                btn.disabled = false;
+                btn.querySelector('.btn-text').textContent = 'Contribute';
+                btn.querySelector('.btn-spinner').classList.add('hidden');
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                    // Update focus for accessibility
+                    setTimeout(() => {
+                        targetElement.focus();
+                    }, 500);
+                }
+            });
+        });
+
+        // Keyboard navigation improvements
+        document.addEventListener('keydown', (e) => {
+            // Escape key to close loading overlay
+            if (e.key === 'Escape' && !loadingOverlay.classList.contains('hidden')) {
+                // Don't close if actively processing
+                if (!analyzeBtn.disabled) {
+                    setLoadingState(false);
+                }
+            }
+        });
+
+        // Performance: Preload critical resources
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.href = '/predict';
+        preloadLink.as = 'fetch';
+        preloadLink.crossOrigin = 'anonymous';
+        document.head.appendChild(preloadLink);
+
+        // Initialize tooltips and progressive enhancement
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add loading animation classes
+            document.body.classList.add('loaded');
+
+            // Initialize intersection observer for animations
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-in');
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.hero, .section-title, .stat, .contribution-form').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
