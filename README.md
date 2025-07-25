@@ -4,7 +4,7 @@
 
 BloomShield is an advanced web application that empowers farmers to detect crop diseases instantly using AI-powered image analysis. Upload a photo of your plant, and get immediate disease identification with expert treatment recommendations.
 
-![BloomShield Demo](https://img.shields.io/badge/Model-YOLOv8m-green) ![Dataset](https://img.shields.io/badge/Dataset-87K%2B%20Images-blue) ![Accuracy](https://img.shields.io/badge/Accuracy-85%2B%25-brightgreen)
+![BloomShield Demo](https://img.shields.io/badge/Model-YOLOv8m-green) ![Dataset](https://img.shields.io/badge/Dataset-87K%2B%20Images-blue) ![Accuracy](https://img.shields.io/badge/Accuracy-99%2B%25-brightgreen)
 
 ## Project Overview
 
