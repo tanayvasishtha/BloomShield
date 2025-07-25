@@ -15,7 +15,11 @@ import os
 import base64
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
+
+# Configure Flask for production
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000  # 1 year cache for static files
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Global model variable
 model = None
@@ -283,6 +287,30 @@ def index():
     """Main page"""
     return render_template('index.html')
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint for monitoring"""
+    return jsonify({
+        'status': 'healthy',
+        'model_loaded': model is not None,
+        'model_classes': len(class_names) if class_names else 0,
+        'static_folder': app.static_folder
+    })
+
+@app.route('/debug/css')
+def debug_css():
+    """Debug CSS loading"""
+    import os
+    css_path = os.path.join(app.static_folder, 'style.css')
+    css_exists = os.path.exists(css_path) if css_path else False
+    
+    return jsonify({
+        'css_file_exists': css_exists,
+        'css_path': css_path,
+        'static_folder': app.static_folder,
+        'static_url_path': app.static_url_path
+    })
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """Predict crop disease from uploaded image"""
@@ -327,8 +355,17 @@ def predict():
         if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
             image.thumbnail(max_size, Image.Resampling.LANCZOS)
         
-        # Run YOLOv8 prediction
-        results = model(image)
+        # Run YOLOv8 prediction with error handling
+        try:
+            results = model(image)
+        except Exception as prediction_error:
+            print(f"Model prediction error: {prediction_error}")
+            return jsonify({
+                'success': False,
+                'error': 'Model prediction failed',
+                'message': 'Unable to process the image with the AI model. Please try again.',
+                'technical_details': str(prediction_error) if app.debug else None
+            }), 500
         
         # Process results
         if results and len(results) > 0:

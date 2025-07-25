@@ -27,12 +27,43 @@
     <meta property="twitter:image" content="/static/og-image.jpg">
 
     <title>BloomShield - AI Crop Disease Detection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
     <!-- DNS prefetch for better performance -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+    <!-- Fallback styles in case CSS doesn't load -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid black;
+            padding: 24px 0;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
